@@ -55,7 +55,7 @@ class WebCamVideo :
             if not(retrieve) :
                 raise Exception("An error occured during the recording")
 
-            img_applied = Image(frame, mtcnn = self.mtcnn, dlib = self.dlib, model = False, title="Face_detection")
+            img_applied = Image(frame, mtcnn = self.mtcnn, dlib = self.dlib, model = False, title="Face_morphing")
            
 
             Image.morphing(img_model,img_applied)
@@ -68,7 +68,7 @@ class WebCamVideo :
 
 if __name__ == "__main__" :
 
-    video = WebCamVideo(120)
+    video = WebCamVideo()
     img_model = Image.get_test()
     #video.detect_face_live()
     video.morphing_realtime(img_model)

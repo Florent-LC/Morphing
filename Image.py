@@ -5,6 +5,7 @@ import cv2
 import os
 import numpy as np
 from typing import Tuple
+import time
 
 from ThisPersonDoesNotExist import *
 
@@ -372,9 +373,9 @@ class Image :
         img.set_Delaunay_Triangulation()
         
         for i,t in enumerate(img.triangles):
-            x1,y1 = (t[0], t[1])
-            x2,y2 = (t[2], t[3])
-            x3,y3 = (t[4], t[5])
+            x1,y1 = t[0]
+            x2,y2 = t[1]
+            x3,y3 = t[2]
             
             img.write_text(f"{i}",(int((x1+x2+x3)/3),int((y1+y2+y3)/3)),0.4)
             
@@ -400,6 +401,16 @@ class Image :
         
         # creating the landmarks and extracting the face only (no need to compute the delaunay triangulation)
         img_applied.extract_face()
+        
+        # if no face is detected, we print that there is no face, and directly exit the function
+        if img_applied.box is None :
+            print('\r No face detected', end='')
+            return
+        
+        else :
+            # clear the console (prevent from accumulating the same message for each frame when no face is detected)
+            # the os.name condition allows to clear whether the os used is windows (nt) or linux/macOs
+            os.system('cls' if os.name == 'nt' else 'clear')
         
         # setting the triangles of the second face, by putting them in the same order as the triangles
         # of the first face
@@ -548,13 +559,15 @@ class Image :
         img1 = Image.get_test()
         img2 = Image.get_test(model=False)
                 
-        #img1.show(False)
-        #img2.show(False)
+        img1.show(False)
+        img2.show(False)
         Image.morphing(img1,img2,debug)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         
         os.remove("test.jpg")
 
-
+        
 
 
 
@@ -571,10 +584,6 @@ if __name__ == "__main__" :
     # for _ in range(2) : # verifying that the landmarks are the same
     #     Image.set_landmarks_test()
     # Image.extract_face_test()
-    # for _ in range(2) : # verifying that the triangles are different
-    #     Image.set_Delaunay_Triangulation_test()
-    Image.morphing_test()
-
-           
-
-
+    for _ in range(2) : # verifying that the triangles are different
+        Image.set_Delaunay_Triangulation_test()
+    #Image.morphing_test()
