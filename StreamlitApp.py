@@ -27,6 +27,6 @@ webrtc_ctx = webrtc_streamer(
     mode=WebRtcMode.SENDRECV,
     rtc_configuration=RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}),
     media_stream_constraints={"video": True, "audio": False},
-    video_transformer_factory=VideoProcessor,
+    video_processor_factory=VideoProcessor,
     async_processing=True,
 )
