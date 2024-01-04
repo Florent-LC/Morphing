@@ -1,13 +1,17 @@
-from random import triangular
+"""
+
+The file used to make basic image manipulation but also perform the morphing of two face images
+
+"""
+
+
 from facenet_pytorch import MTCNN
 import dlib
 import cv2
 import os
 import numpy as np
 from typing import Tuple
-import time
-
-from ThisPersonDoesNotExist import *
+from .ThisPersonDoesNotExist import ThisPersonDoesNotExist
 
 
 
@@ -45,21 +49,12 @@ class Image :
         self.box = None
 
 
+    def get_face(title : str = "", model : bool = True) :
 
-    def get_test(model : bool = True) :
+        person = ThisPersonDoesNotExist()
+        person.decode_image()
 
-        person = ThisPersonDoesNotExist("test.jpg")
-        person.save()
-        img = cv2.imread(person.save_file_name,person.color)
-
-        return Image(img, mtcnn, dlib_predictor, model, title = "Test")
-
-
-    def get_test_no_face() :
-
-        img = cv2.imread("no_face.png",1)
-
-        return Image(img, mtcnn, dlib_predictor, False, title = "Test with no face")
+        return Image(person.img, mtcnn, dlib_predictor, model, title = title)
 
 
     def show(self, continuous = True, color = True) :
@@ -73,16 +68,6 @@ class Image :
             cv2.destroyAllWindows()
 
 
-    def show_test() :
-
-        img = Image.get_test()
-
-        img.show(False)
-        img.show(False,False)
-
-        os.remove("test.jpg")
-
-
     def rotation(self, angle : float) :
         ''' Rotate the image '''
 
@@ -90,16 +75,6 @@ class Image :
         rotated_image = cv2.warpAffine(src=self.img, M=rotate_matrix, dsize=(self.width, self.height))
 
         self.img = rotated_image
-
-
-    def rotation_test() :
-
-        img = Image.get_test()
-
-        img.rotation(45.)
-        img.show(False)
-
-        os.remove("test.jpg")
 
 
     def draw_circle(self, circle_center : Tuple[int, int], radius : int, filled : bool, thickness : int = 3) :
@@ -110,33 +85,10 @@ class Image :
         thickness2 = -1 if filled else thickness
 
         cv2.circle(self.img, circle_center, radius, (0, 0, 255), thickness=thickness2, lineType=cv2.LINE_AA)
-
-
-    def draw_circle_test() :
-
-        img = Image.get_test()
-
-        img.draw_circle(img.center,100,True)
-        img.draw_circle(img.center,200,False)
-
-        img.show(False)
-
-        os.remove("test.jpg")
         
 
     def draw_point(self, coordinate : Tuple[int, int]) :
         self.draw_circle(coordinate, radius = 1, filled = True)
-
-
-    def draw_point_test() :
-
-        img = Image.get_test()
-
-        img.draw_point(img.center)
-
-        img.show(False)
-
-        os.remove("test.jpg")
 
 
     def draw_rectangle(self, start_point : Tuple[int,int], end_point : Tuple[int,int], thickness : int = 3) :
@@ -145,33 +97,10 @@ class Image :
         cv2.rectangle(self.img, start_point, end_point, (0, 0, 255), thickness=thickness, lineType=cv2.LINE_8)
 
 
-    def draw_rectangle_test() :
-
-        img = Image.get_test()
-
-        a,b = img.center
-        img.draw_rectangle(img.center,(a+300,b+300))
-
-        img.show(False)
-
-        os.remove("test.jpg")
-
-
     def write_text(self, text : str, position : Tuple[int,int], fontscale : float = 0.5) :
         ''' Write a text on the image at a give coordinate '''
         
         cv2.putText(self.img, text, position, fontFace = cv2.FONT_HERSHEY_COMPLEX, fontScale = fontscale, color = (255,255,255))
-
-
-    def write_text_test() :
-
-        img = Image.get_test()
-
-        img.write_text("Hello World ! / 42.22293556", img.center)
-
-        img.show(False)
-
-        os.remove("test.jpg")
 
 
     def truncate(x : float, p : int) :
@@ -207,26 +136,6 @@ class Image :
                     self.write_text(f"{prob_truncate}%", (int((a+c)/2),d+10))
 
 
-    def detect_faces_test() :
-
-        img = Image.get_test()
-
-        img.detect_faces()
-        img.show(False)
-
-        os.remove("test.jpg")
-
-
-    def detect_faces_test_no_face() :
-
-        img = Image.get_test_no_face()
-
-        img.detect_faces()
-
-        img.show(False)
-
-
-
     def set_box_face(self, threshold : float = 0.9) :
         ''' Return the box around the face if detected (above the threshold),
             Only one face is extracted (with the highest probability) '''
@@ -245,8 +154,6 @@ class Image :
                 self.box = dlib.rectangle(a,b,c,d)
              
         
-
-    
     def set_landmarks(self) :
         
         ''' model is just a boolean telling if the image considered is the model or
@@ -273,22 +180,7 @@ class Image :
                 # This will be useful in the future since we want to have an universal way to know which triangle
                 # we consider (independently on the image considered)
                 self.landmarks_dictionnary = {coordinate: index for index, coordinate in enumerate(self.landmarks_list)}
-
         
-    
-    def set_landmarks_test() :
-        
-        img = Image.get_test()
-
-        img.set_landmarks()
-        for i,(x,y) in enumerate(img.landmarks_list) :
-            img.draw_point((x,y))
-            img.write_text(str(i),(x,y))
-        img.show(False)
-
-        os.remove("test.jpg")
-        
-
 
     def extract_face(self) :
         
@@ -317,20 +209,6 @@ class Image :
             else :
                 self.inverted_mask = cv2.bitwise_not(self.mask)
                 self.face = cv2.bitwise_and(self.img, self.img, mask=self.inverted_mask)
-            
-
-    
-    def extract_face_test() :
-
-        img = Image.get_test()
-
-        img.extract_face()
-        cv2.imshow("Extracted Face", img.face)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-            
-        os.remove("test.jpg")
-        
 
 
     def set_Delaunay_Triangulation(self) :
@@ -362,39 +240,16 @@ class Image :
                                    self.landmarks_dictionnary[tuple(e[1])],
                                    self.landmarks_dictionnary[tuple(e[2])] ] for e in self.triangles ]
             self.indexes_triangles = np.array(indexes_triangles, dtype=np.uint8)
-            
-            
-
-
-    def set_Delaunay_Triangulation_test() :
-        
-        img = Image.get_test()
-        
-        img.set_Delaunay_Triangulation()
-        
-        for i,t in enumerate(img.triangles):
-            x1,y1 = t[0]
-            x2,y2 = t[1]
-            x3,y3 = t[2]
-            
-            img.write_text(f"{i}",(int((x1+x2+x3)/3),int((y1+y2+y3)/3)),0.4)
-            
-            cv2.line(img.img, (x1,y1), (x2,y2), (0, 0, 255), 2)
-            cv2.line(img.img, (x2,y2), (x3,y3), (0, 0, 255), 2)
-            cv2.line(img.img, (x1,y1), (x3,y3), (0, 0, 255), 2)
-            
-        img.show(False)
-        
-        os.remove("test.jpg")
-        
 
 
     def morphing(img_model : 'Image', img_applied : 'Image', debug : bool = False) :
 
-        ''' Plot the resulting morphing (doesn't return anything) '''
+        ''' Return the resulting morphing '''
 
-        assert img_model.model, ("The first image should be the model")
-        assert not(img_applied.model), ("The second image should be the destination")
+        if not(img_model.model) :
+            raise ValueError("The first image should be the model")
+        if (img_applied.model) :
+            raise ValueError("The second image should be the destination")
         
         # creating the landmarks and the triangulation
         img_model.set_Delaunay_Triangulation()
@@ -548,42 +403,5 @@ class Image :
 
         # an opencv function automatically smoothen the result
         res = cv2.seamlessClone(img_morphing, img_applied.img, img_applied.mask, center_face2, cv2.NORMAL_CLONE)
-        
-        cv2.imshow("Morphing Image", res)
-        
-            
-            
 
-    def morphing_test(debug : bool = False) :
-        
-        img1 = Image.get_test()
-        img2 = Image.get_test(model=False)
-                
-        img1.show(False)
-        img2.show(False)
-        Image.morphing(img1,img2,debug)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        
-        os.remove("test.jpg")
-
-        
-
-
-
-if __name__ == "__main__" :
-
-    # Image.show_test()
-    # Image.rotation_test()
-    # Image.draw_rectangle_test()
-    # Image.draw_circle_test()
-    # Image.draw_point_test()
-    # Image.write_text_test()
-    # Image.detect_faces_test()
-    # Image.detect_faces_test_no_face()
-    # for _ in range(2) : # verifying that the landmarks are the same
-    #     Image.set_landmarks_test()
-    # Image.extract_face_test()
-    for _ in range(2) : # verifying that the triangles are different
-        Image.set_Delaunay_Triangulation_test()
-    #Image.morphing_test()
+        return res
