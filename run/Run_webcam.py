@@ -15,13 +15,12 @@ detect_face = True
 # wether to morph in realtime the face with a randomly generated face
 morphing = True
 
-fps = 30.
+fps = 30.0
 # echap keybind
 exit_keybind = "\x1b"
 
 
-def main() :
-
+def main():
     if detect_face:
         video = WebCamVideo(fps=fps, exit_keybind=exit_keybind)
         video.detect_face_live()
@@ -31,5 +30,6 @@ def main() :
         img_model = Image.get_face(title="Generated Face", model=True)
         video.morphing_realtime(img_model)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
