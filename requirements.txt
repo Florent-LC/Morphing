@@ -1,0 +1,7 @@
+# platform: win-64
+dlib==19.24.2
+facenet-pytorch==2.5.3
+numpy==1.26.0
+opencv-python==4.8.1.78
+pytest==7.4.4
+streamlit==1.29.0
