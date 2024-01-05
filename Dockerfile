@@ -47,7 +47,7 @@ USER appuser
 COPY . .
 
 # Expose the port that the application listens on.
-EXPOSE 8080
+EXPOSE 8501
 
 # Run the application.
 CMD python -m streamlit run ./run/Run_streamlit.py
