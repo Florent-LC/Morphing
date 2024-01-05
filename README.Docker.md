@@ -15,6 +15,9 @@ you'll want to build the image for that platform, e.g.:
 
 Then, push it to your registry, e.g. `docker push myregistry.com/myapp`.
 
+Consult Docker's [getting started](https://docs.docker.com/go/get-started-sharing/)
+docs for more detail on building and pushing.
+
 ### /!\ Warning for Mac users
 
 When tested on a Mac, the container did not run properly even if the build was completed. This is due to the inability of the docker container to access the camera on MacOS. It gives the following error : 
@@ -25,8 +28,7 @@ The following stackoverflow thread gives instructions on how to access the webca
 
 https://stackoverflow.com/questions/33985648/access-camera-inside-docker-container/64634921#64634921
 
-Consult Docker's [getting started](https://docs.docker.com/go/get-started-sharing/)
-docs for more detail on building and pushing.
+See also this tutorial : https://medium.com/@jijupax/connect-the-webcam-to-docker-on-mac-or-windows-51d894c44468
 
 ### References
 * [Docker's Python guide](https://docs.docker.com/language/python/)
